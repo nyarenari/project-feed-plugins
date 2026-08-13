@@ -54,7 +54,7 @@ claude plugin marketplace add nyarenari/project-feed-plugins
 claude plugin install project-feed@project-feed
 ```
 
-Claude Code asks for the Project Feed API key when the plugin is enabled and stores it as sensitive plugin configuration.
+Start Claude Code and run `/plugin configure project-feed@project-feed` to enter the API key. Claude Code stores it as sensitive plugin configuration.
 
 ### Gemini CLI
 

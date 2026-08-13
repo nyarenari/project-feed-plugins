@@ -50,7 +50,7 @@ install_claude() {
   }
   claude plugin marketplace add "$plugin_root"
   claude plugin install project-feed@project-feed
-  printf 'Installed Project Feed in Claude Code. Configure the sensitive API key when prompted.\n'
+  printf 'Installed Project Feed in Claude Code. Run /plugin configure project-feed@project-feed to add the API key.\n'
 }
 
 install_gemini() {
