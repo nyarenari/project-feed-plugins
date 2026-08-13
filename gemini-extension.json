@@ -1,0 +1,22 @@
+{
+  "name": "project-feed",
+  "version": "0.2.0",
+  "description": "Plan work, manage tasks, and share project progress from Gemini CLI.",
+  "settings": [
+    {
+      "name": "Project Feed API key",
+      "description": "A dedicated Project Feed workspace API key.",
+      "envVar": "PROJECT_FEED_API_KEY",
+      "sensitive": true
+    }
+  ],
+  "mcpServers": {
+    "project-feed": {
+      "httpUrl": "https://projectfeed.app/api/mcp",
+      "headers": {
+        "Authorization": "Bearer ${PROJECT_FEED_API_KEY}"
+      },
+      "description": "Project Feed projects, tasks, files, and updates"
+    }
+  }
+}

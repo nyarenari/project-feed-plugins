@@ -1,0 +1,20 @@
+{
+  "name": "project-feed",
+  "interface": {
+    "displayName": "Project Feed"
+  },
+  "plugins": [
+    {
+      "name": "project-feed",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

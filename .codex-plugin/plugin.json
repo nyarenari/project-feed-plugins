@@ -1,0 +1,45 @@
+{
+  "name": "project-feed",
+  "version": "0.2.0",
+  "description": "Plan work, manage tasks, and share project progress from Codex and ChatGPT.",
+  "author": {
+    "name": "Project Feed",
+    "email": "support@projectfeed.app",
+    "url": "https://projectfeed.app"
+  },
+  "homepage": "https://projectfeed.app",
+  "repository": "https://github.com/nyarenari/project-feed-plugins",
+  "license": "MIT",
+  "keywords": [
+    "productivity",
+    "project-management",
+    "tasks",
+    "project-feed",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Project Feed",
+    "shortDescription": "Plan projects and keep work current",
+    "longDescription": "Use Project Feed to plan projects, manage tasks, prepare status reports, and triage work from Codex and ChatGPT.",
+    "developerName": "Project Feed",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://projectfeed.app",
+    "privacyPolicyURL": "https://projectfeed.app/privacy",
+    "termsOfServiceURL": "https://projectfeed.app/terms",
+    "defaultPrompt": [
+      "Pick up a Project Feed task and keep it current while you work.",
+      "Turn this feature brief into a Project Feed task plan.",
+      "Summarize the status of a Project Feed project."
+    ],
+    "brandColor": "#0E9F6E",
+    "composerIcon": "./assets/logo.svg",
+    "logo": "./assets/logo.svg",
+    "screenshots": []
+  }
+}

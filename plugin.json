@@ -1,0 +1,20 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "project-feed",
+  "version": "0.2.0",
+  "description": "Plan work, manage tasks, and share project progress with Project Feed.",
+  "author": {
+    "name": "Project Feed",
+    "email": "support@projectfeed.app"
+  },
+  "homepage": "https://projectfeed.app",
+  "repository": "https://github.com/nyarenari/project-feed-plugins",
+  "license": "MIT",
+  "keywords": [
+    "productivity",
+    "project-management",
+    "tasks",
+    "project-feed",
+    "mcp"
+  ]
+}

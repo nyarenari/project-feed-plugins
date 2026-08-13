@@ -1,0 +1,17 @@
+{
+  "$schema": "https://www.schemastore.org/claude-code-marketplace.json",
+  "name": "project-feed",
+  "description": "Project Feed productivity plugins",
+  "owner": {
+    "name": "Project Feed",
+    "email": "support@projectfeed.app"
+  },
+  "plugins": [
+    {
+      "name": "project-feed",
+      "source": "./",
+      "description": "Plan work, manage tasks, and share project progress from Claude Code.",
+      "category": "productivity"
+    }
+  ]
+}

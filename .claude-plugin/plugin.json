@@ -1,0 +1,31 @@
+{
+  "name": "project-feed",
+  "version": "0.2.0",
+  "description": "Plan work, manage tasks, and share project progress from Claude Code.",
+  "author": {
+    "name": "Project Feed",
+    "email": "support@projectfeed.app",
+    "url": "https://projectfeed.app"
+  },
+  "homepage": "https://projectfeed.app",
+  "repository": "https://github.com/nyarenari/project-feed-plugins",
+  "license": "MIT",
+  "keywords": [
+    "productivity",
+    "project-management",
+    "tasks",
+    "project-feed",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.claude-mcp.json",
+  "userConfig": {
+    "api_key": {
+      "type": "string",
+      "title": "Project Feed API key",
+      "description": "A dedicated Project Feed workspace API key.",
+      "sensitive": true,
+      "required": true
+    }
+  }
+}

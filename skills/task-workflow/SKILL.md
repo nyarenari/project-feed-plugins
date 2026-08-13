@@ -1,6 +1,6 @@
 ---
 name: task-workflow
-description: Work from a Project Feed task and keep its status, checklist, and comments current. Use when a user names a Project Feed task or asks Cursor to fix, build, implement, investigate, or pick up tracked work.
+description: Work from a Project Feed task and keep its status, checklist, and comments current. Use when a user names a Project Feed task or asks an agent to fix, build, implement, investigate, or pick up tracked work.
 ---
 
 # Task workflow

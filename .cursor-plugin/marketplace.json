@@ -1,0 +1,18 @@
+{
+  "name": "project-feed",
+  "owner": {
+    "name": "Project Feed",
+    "email": "support@projectfeed.app"
+  },
+  "metadata": {
+    "description": "Project Feed productivity plugins"
+  },
+  "plugins": [
+    {
+      "name": "project-feed",
+      "source": ".",
+      "description": "Plan work, manage tasks, and share project progress from Cursor.",
+      "category": "Productivity"
+    }
+  ]
+}
