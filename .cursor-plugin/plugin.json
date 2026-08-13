@@ -1,0 +1,32 @@
+{
+  "name": "project-feed",
+  "displayName": "Project Feed",
+  "version": "0.1.0",
+  "description": "Plan work, manage tasks, and share project progress from Cursor.",
+  "author": {
+    "name": "Project Feed",
+    "email": "support@projectfeed.app"
+  },
+  "homepage": "https://projectfeed.app",
+  "repository": "https://github.com/nyarenari/project-feed-cursor-plugin",
+  "license": "MIT",
+  "keywords": [
+    "productivity",
+    "project-management",
+    "tasks",
+    "project-feed",
+    "mcp"
+  ],
+  "logo": "assets/logo.svg",
+  "variables": {
+    "type": "object",
+    "properties": {
+      "PROJECT_FEED_API_KEY": {
+        "type": "string",
+        "title": "Project Feed API key",
+        "description": "A dedicated Project Feed workspace API key. Use the Project/task automation preset to manage work from Cursor."
+      }
+    },
+    "required": ["PROJECT_FEED_API_KEY"]
+  }
+}

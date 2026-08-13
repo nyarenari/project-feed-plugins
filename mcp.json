@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "project-feed": {
+      "url": "https://projectfeed.app/api/mcp",
+      "headers": {
+        "Authorization": "Bearer ${PROJECT_FEED_API_KEY}"
+      }
+    }
+  }
+}
