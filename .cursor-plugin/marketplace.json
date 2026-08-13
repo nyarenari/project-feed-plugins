@@ -10,6 +10,7 @@
   "plugins": [
     {
       "name": "project-feed",
+      "displayName": "Project Feed",
       "source": ".",
       "description": "Plan work, manage tasks, and share project progress from Cursor.",
       "category": "Productivity"

@@ -5,29 +5,61 @@ plugin_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 client=${1:-cursor}
 
 install_cursor() {
-  local install_root install_path current_target
+  local install_root install_path current_target staging_path backup_path installed_name
   install_root="${CURSOR_PLUGIN_HOME:-$HOME/.cursor/plugins/local}"
   install_path="$install_root/project-feed"
 
   mkdir -p "$install_root"
 
+  staging_path=$(mktemp -d "$install_root/.project-feed.XXXXXX")
+  cp -R \
+    "$plugin_root/.cursor-plugin" \
+    "$plugin_root/assets" \
+    "$plugin_root/skills" \
+    "$staging_path/"
+  cp \
+    "$plugin_root/LICENSE" \
+    "$plugin_root/README.md" \
+    "$plugin_root/SECURITY.md" \
+    "$plugin_root/mcp.json" \
+    "$staging_path/"
+
   if [[ -L "$install_path" ]]; then
     current_target=$(readlink "$install_path")
-    if [[ "$current_target" == "$plugin_root" ]]; then
-      printf 'Project Feed is already linked in Cursor at %s\n' "$install_path"
-      return
+    if [[ "$current_target" != "$plugin_root" ]]; then
+      printf 'Refusing to replace symlink at %s\n' "$install_path" >&2
+      rm -rf "$staging_path"
+      exit 1
     fi
-    printf 'Refusing to replace symlink at %s\n' "$install_path" >&2
+    unlink "$install_path"
+  elif [[ -d "$install_path" ]]; then
+    installed_name=$(node -e 'try { console.log(require(process.argv[1]).name) } catch {}' "$install_path/.cursor-plugin/plugin.json")
+    if [[ "$installed_name" != "project-feed" ]]; then
+      printf 'Refusing to replace directory at %s\n' "$install_path" >&2
+      rm -rf "$staging_path"
+      exit 1
+    fi
+    backup_path=$(mktemp -d "$install_root/.project-feed.previous.XXXXXX")
+    rmdir "$backup_path"
+    mv "$install_path" "$backup_path"
+  elif [[ -e "$install_path" ]]; then
+    printf 'Refusing to replace path at %s\n' "$install_path" >&2
+    rm -rf "$staging_path"
     exit 1
   fi
 
-  if [[ -e "$install_path" ]]; then
-    printf 'Refusing to replace existing path at %s\n' "$install_path" >&2
+  if ! mv "$staging_path" "$install_path"; then
+    if [[ -n "${backup_path:-}" ]]; then
+      mv "$backup_path" "$install_path"
+    fi
     exit 1
   fi
 
-  ln -s "$plugin_root" "$install_path"
-  printf 'Linked Project Feed in Cursor at %s\n' "$install_path"
+  if [[ -n "${backup_path:-}" ]]; then
+    rm -rf "$backup_path"
+  fi
+
+  printf 'Installed Project Feed in Cursor at %s\n' "$install_path"
   printf 'Restart Cursor or run Developer: Reload Window.\n'
 }
 

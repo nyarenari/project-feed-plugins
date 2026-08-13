@@ -73,6 +73,16 @@ for (const field of ["license", "logo", "skills", "mcpServers"]) {
     errors.push(`Cursor manifest is missing ${field}`);
   }
 }
+if (manifests.cursor.displayName !== "Project Feed") {
+  errors.push("Cursor manifest has the wrong display name");
+}
+
+const cursorMarketplacePlugin = marketplaces[0].plugins?.find(
+  (plugin) => plugin.name === "project-feed",
+);
+if (cursorMarketplacePlugin?.displayName !== "Project Feed") {
+  errors.push("Cursor marketplace entry has the wrong display name");
+}
 
 for (const field of ["license", "skills", "mcpServers", "interface"]) {
   if (!manifests.codex[field]) {
@@ -101,12 +111,12 @@ for (const match of JSON.stringify(cursorMcp).matchAll(/\$\{([A-Z0-9_]+)\}/g)) {
 if (cursorMcp.$schema !== "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json") {
   errors.push("Agent Plugins MCP schema is missing");
 }
-if (cursorMcp.mcpServers?.["project-feed"]?.type !== "streamable-http") {
+if (cursorMcp.mcpServers?.["Project Feed"]?.type !== "streamable-http") {
   errors.push("Agent Plugins MCP transport is not streamable HTTP");
 }
 
 const claudeMcp = await readJson(".claude-mcp.json");
-if (claudeMcp.mcpServers?.["project-feed"]?.type !== "http") {
+if (claudeMcp.mcpServers?.["Project Feed"]?.type !== "http") {
   errors.push("Claude MCP transport is not HTTP");
 }
 if (!manifests.claude.userConfig?.api_key?.sensitive) {
@@ -117,7 +127,7 @@ if (!JSON.stringify(claudeMcp).includes("${user_config.api_key}")) {
 }
 
 const codexMcp = await readJson(".mcp.json");
-if (codexMcp["project-feed"]?.bearer_token_env_var !== "PROJECT_FEED_API_KEY") {
+if (codexMcp["Project Feed"]?.bearer_token_env_var !== "PROJECT_FEED_API_KEY") {
   errors.push("Codex MCP does not use PROJECT_FEED_API_KEY");
 }
 
@@ -129,9 +139,9 @@ if (!geminiSetting?.sensitive) {
 }
 
 const endpoints = [
-  cursorMcp.mcpServers?.["project-feed"]?.url,
-  claudeMcp.mcpServers?.["project-feed"]?.url,
-  codexMcp["project-feed"]?.url,
+  cursorMcp.mcpServers?.["Project Feed"]?.url,
+  claudeMcp.mcpServers?.["Project Feed"]?.url,
+  codexMcp["Project Feed"]?.url,
   manifests.gemini.mcpServers?.["project-feed"]?.httpUrl,
 ];
 if (endpoints.some((endpoint) => endpoint !== "https://projectfeed.app/api/mcp")) {

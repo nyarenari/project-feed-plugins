@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
   "mcpServers": {
-    "project-feed": {
+    "Project Feed": {
       "type": "streamable-http",
       "url": "https://projectfeed.app/api/mcp",
       "headers": {
