@@ -2,10 +2,7 @@
   "mcpServers": {
     "Project Feed": {
       "type": "http",
-      "url": "https://projectfeed.app/api/mcp",
-      "headers": {
-        "Authorization": "Bearer ${user_config.api_key}"
-      }
+      "url": "https://projectfeed.app/api/mcp"
     }
   }
 }

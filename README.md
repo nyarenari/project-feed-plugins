@@ -16,13 +16,13 @@ The repository packages one hosted MCP connection with shared skills for task ex
 
 ## Configure access
 
-Create a dedicated API key in your Project Feed workspace developer settings. Choose the **Project/task automation** preset if you want the agent to manage projects and tasks. A read-only key limits the agent to matching read tools.
+Each client signs in to Project Feed with OAuth the first time it connects. You approve the connection on the Project Feed sign-in page, and the client stores its own token. Nothing needs to be copied into the plugin.
 
-Project Feed MCP access requires a Pro workspace. API keys belong to one workspace, so use a different key when you want to switch workspaces.
+Project Feed MCP access requires a Pro workspace. The agent gets the same access you have. A sign-in binds to the first workspace it uses; clients that can send the `x-project-feed-workspace` header choose which one that is.
 
 ### Cursor
 
-When the listing is live, install Project Feed from the Cursor Marketplace, then open **Customize > Project Feed > Configure** and enter the API key.
+When the listing is live, install Project Feed from the Cursor Marketplace, then open **Customize > Project Feed** and choose **Connect** to sign in.
 
 For local development:
 
@@ -43,7 +43,7 @@ codex plugin marketplace add nyarenari/project-feed-plugins
 codex plugin add project-feed@project-feed
 ```
 
-Set `PROJECT_FEED_API_KEY` in the environment that starts Codex. The repository marketplace also appears in supported ChatGPT plugin surfaces.
+Sign in when Codex prompts for Project Feed. `codex mcp login` starts the sign-in by hand. The repository marketplace also appears in supported ChatGPT plugin surfaces.
 
 ### Claude Code
 
@@ -54,7 +54,7 @@ claude plugin marketplace add nyarenari/project-feed-plugins
 claude plugin install project-feed@project-feed
 ```
 
-Start Claude Code and run `/plugin configure project-feed@project-feed` to enter the API key. Claude Code stores it as sensitive plugin configuration.
+Start Claude Code, run `/mcp`, choose Project Feed, and sign in.
 
 ### Gemini CLI
 
@@ -64,7 +64,7 @@ Install the extension from GitHub:
 gemini extensions install https://github.com/nyarenari/project-feed-plugins.git
 ```
 
-Gemini CLI asks for the Project Feed API key during installation and stores it as a sensitive extension setting.
+Start Gemini CLI and run `/mcp auth project-feed` to sign in.
 
 ## Try it
 
@@ -95,11 +95,11 @@ See [Publishing](docs/PUBLISHING.md) for the separate marketplace release steps.
 
 ## Permissions and data
 
-The plugins send Project Feed tool requests to `https://projectfeed.app/api/mcp`. Project Feed applies the permissions from the configured API key. The packages do not include analytics, background hooks, or local executables.
+The plugins send Project Feed tool requests to `https://projectfeed.app/api/mcp`. Project Feed applies the permissions of the account that signed in. The packages do not include analytics, background hooks, or local executables.
 
-Do not commit an API key to this repository or a workspace configuration file. Revoke the key from Project Feed if a device or client account is no longer trusted.
+Disconnect the client in Project Feed if a device or client account is no longer trusted.
 
-See the [Project Feed MCP documentation](https://projectfeed.app/docs/mcp) and [Project Feed privacy policy](https://projectfeed.app/privacy) for service details.
+See the [Project Feed MCP documentation](https://projectfeed.app/docs/agents/mcp) and [Project Feed privacy policy](https://projectfeed.app/privacy) for service details.
 
 ## Support
 

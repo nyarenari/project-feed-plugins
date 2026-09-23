@@ -100,14 +100,7 @@ for (const manifest of [manifests.cursor, manifests.codex, manifests.claude]) {
 
 await requirePath(manifests.cursor.logo);
 
-const cursorVariables = manifests.cursor.variables?.properties ?? {};
 const cursorMcp = await readJson("mcp.json");
-for (const match of JSON.stringify(cursorMcp).matchAll(/\$\{([A-Z0-9_]+)\}/g)) {
-  if (!cursorVariables[match[1]]) {
-    errors.push(`Cursor MCP variable ${match[1]} is not declared`);
-  }
-}
-
 if (cursorMcp.$schema !== "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json") {
   errors.push("Agent Plugins MCP schema is missing");
 }
@@ -119,23 +112,21 @@ const claudeMcp = await readJson(".claude-mcp.json");
 if (claudeMcp.mcpServers?.["Project Feed"]?.type !== "http") {
   errors.push("Claude MCP transport is not HTTP");
 }
-if (!manifests.claude.userConfig?.api_key?.sensitive) {
-  errors.push("Claude API key setting must be sensitive");
-}
-if (!JSON.stringify(claudeMcp).includes("${user_config.api_key}")) {
-  errors.push("Claude MCP does not use the sensitive API key setting");
-}
 
 const codexMcp = await readJson(".mcp.json");
-if (codexMcp["Project Feed"]?.bearer_token_env_var !== "PROJECT_FEED_API_KEY") {
-  errors.push("Codex MCP does not use PROJECT_FEED_API_KEY");
-}
 
-const geminiSetting = manifests.gemini.settings?.find(
-  (setting) => setting.envVar === "PROJECT_FEED_API_KEY",
-);
-if (!geminiSetting?.sensitive) {
-  errors.push("Gemini API key setting must be sensitive");
+const credentialFields = /"(headers|bearer_token_env_var|userConfig|variables|settings)"/;
+for (const [label, value] of Object.entries({
+  "Agent Plugins MCP": cursorMcp,
+  "Claude MCP": claudeMcp,
+  "Codex MCP": codexMcp,
+  "Claude manifest": manifests.claude,
+  "Cursor manifest": manifests.cursor,
+  "Gemini manifest": manifests.gemini,
+})) {
+  if (credentialFields.test(JSON.stringify(value))) {
+    errors.push(`${label} configures a credential; clients must sign in with OAuth`);
+  }
 }
 
 const endpoints = [

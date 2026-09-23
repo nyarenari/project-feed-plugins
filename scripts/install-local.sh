@@ -72,7 +72,7 @@ install_codex() {
     codex plugin marketplace add "$plugin_root"
   fi
   codex plugin add project-feed@project-feed
-  printf 'Installed Project Feed in Codex. Start Codex with PROJECT_FEED_API_KEY set.\n'
+  printf 'Installed Project Feed in Codex. Sign in to Project Feed when Codex asks.\n'
 }
 
 install_claude() {
@@ -82,7 +82,7 @@ install_claude() {
   }
   claude plugin marketplace add "$plugin_root"
   claude plugin install project-feed@project-feed
-  printf 'Installed Project Feed in Claude Code. Run /plugin configure project-feed@project-feed to add the API key.\n'
+  printf 'Installed Project Feed in Claude Code. Run /mcp and choose Project Feed to sign in.\n'
 }
 
 install_gemini() {
@@ -91,7 +91,7 @@ install_gemini() {
     exit 1
   }
   gemini extensions link "$plugin_root"
-  printf 'Linked Project Feed in Gemini CLI. Configure the extension setting when prompted.\n'
+  printf 'Linked Project Feed in Gemini CLI. Run /mcp auth project-feed to sign in.\n'
 }
 
 case "$client" in
