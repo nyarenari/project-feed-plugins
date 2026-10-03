@@ -2,7 +2,7 @@
 
 Use Project Feed from Cursor, Codex, Claude Code, Gemini CLI, and clients that support the Agent Plugins standard.
 
-The repository packages one hosted MCP connection with shared skills for task execution, project planning, status reports, and backlog triage. Client-specific manifests stay thin so every client receives the same workflows.
+The repository packages one hosted MCP connection with shared skills for task execution, project planning, status reports, backlog triage, and media review. Client-specific manifests stay thin so every client receives the same workflows.
 
 ## Supported clients
 
@@ -72,6 +72,7 @@ Start Gemini CLI and run `/mcp auth project-feed` to sign in.
 - "Turn this feature brief into a task plan in Project Feed."
 - "Give me a status update for the mobile app project."
 - "Triage the open backlog and show me what needs attention."
+- "Iterate on this render with my feedback until I approve it."
 
 Clients may ask for approval before MCP tool calls according to their run mode or team policy.
 
