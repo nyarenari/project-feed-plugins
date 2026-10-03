@@ -11,7 +11,7 @@ Publish media to a Project Feed post, wait for the human's annotations, change t
 
 1. For a new piece of work, call `create_post` with a `projectId`, then upload each file with `prepare_media_upload` (destination `{type: "post", id: postId}`), transfer the bytes to the returned URL, and call `complete_media_upload`. Use `upload_media` only for small files.
 2. For an existing post, call `list_post_versions` to find the current version, then call `publish_post_version` with the post ID, a short `changeNote`, and the new files in `uploads`. Pass `mediaIds` to drop media that the new version replaces.
-3. Give the human the post link and ask them to review. Say which version is ready.
+3. Tell the human which post is ready (title and project) and which version, and ask them to review it in Project Feed.
 
 ## Wait
 
