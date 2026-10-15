@@ -1,9 +1,9 @@
 ---
-name: using-project-feed
+name: pf-guide
 description: Teaches agents to use Project Feed through its MCP tools or the pf CLI, covering posts and versions, media uploads, media review and annotations, tasks and checklists, docs, canvases, chat, handoffs between agents, and the ID, retry, and limit rules that trip agents up. Use whenever an agent reads or writes anything in Project Feed, including posting an update, sharing a render for review, reading or answering annotations, editing a doc, building a canvas, starting a discussion, or taking a handoff, even when another Project Feed skill also applies.
 ---
 
-# Using Project Feed
+# Project Feed guide
 
 Project Feed is a workspace where teams post progress, review media, track tasks, and keep docs, canvases, and discussions next to the work. Everything lives in a workspace and most things belong to a project.
 

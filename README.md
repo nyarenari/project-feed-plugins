@@ -2,7 +2,7 @@
 
 Use Project Feed from Cursor, Codex, Claude Code, Gemini CLI, and clients that support the Agent Plugins standard.
 
-The repository packages one hosted MCP connection with shared skills for task execution, project planning, status reports, backlog triage, and media review rounds, plus `using-project-feed`, a full guide to posts, versions, media review, tasks, docs, canvases, chat, and handoffs. Client-specific manifests stay thin so every client receives the same workflows.
+The repository packages one hosted MCP connection with shared skills for task execution, project planning, status reports, backlog triage, and media review rounds, plus `pf-guide`, a full guide to posts, versions, media review, tasks, docs, canvases, chat, and handoffs. Client-specific manifests stay thin so every client receives the same workflows.
 
 ## Supported clients
 
@@ -79,10 +79,10 @@ Start Gemini CLI and run `/mcp auth project-feed` to sign in.
 Agents that already connect to Project Feed, through MCP or the `pf` CLI, can install the guide on its own:
 
 ```bash
-npx skills add https://github.com/nyarenari/project-feed-plugins/tree/main/skills/using-project-feed
+npx skills add https://github.com/nyarenari/project-feed-plugins/tree/main/skills/pf-guide
 ```
 
-Or point the agent at [`skills/using-project-feed/SKILL.md`](skills/using-project-feed/SKILL.md). It links to one reference file per area, and the agent reads only the ones it needs.
+Or point the agent at [`skills/pf-guide/SKILL.md`](skills/pf-guide/SKILL.md). It links to one reference file per area, and the agent reads only the ones it needs.
 
 Clients may ask for approval before MCP tool calls according to their run mode or team policy.
 
