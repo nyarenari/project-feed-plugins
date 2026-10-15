@@ -31,7 +31,7 @@ A task has three handles: the internal `id`, the `identifier` (`PRO-42`, the pro
 - Write tools need the internal `id`. `update_task`, `add_checklist_item`, `create_task_comment`, `list_subtasks`, and the tag tools reject identifiers with "Invalid tool arguments."
 - The handoff tools accept identifiers and task numbers.
 
-So when the user names a task, call `get_task` with what they gave you and reuse the returned `id` everywhere after that. If "Invalid tool arguments." comes back from a task tool, you probably passed an identifier.
+So when the user names a task, call `get_task` with `taskId` set to what they gave you, then pass the returned `id` as `taskId` everywhere after that. If "Invalid tool arguments." comes back from a task tool, you probably passed an identifier.
 
 ## Find before you create
 

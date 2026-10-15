@@ -10,7 +10,7 @@ The task is the shared record of the work. People and other agents read it to se
 ## Start
 
 1. Find the task. If the user named one, call `get_task` with what they gave you. It accepts the internal ID, an identifier like `PRO-123`, or a task number like `42` (pass `42`, not `#42`). Otherwise use `search`, or `list_tasks` with `projectId` and `status`, and reuse a clear match.
-2. Keep the internal `id` from `get_task`. `update_task`, `add_checklist_item`, `create_task_comment`, `create_subtask`, and the tag tools reject identifiers with "Invalid tool arguments."
+2. Keep the internal `id` from `get_task` and pass it as `taskId` from then on. `update_task`, `add_checklist_item`, `create_task_comment`, `create_subtask`, and the tag tools reject identifiers with "Invalid tool arguments."
 3. Read before changing: description, status, assignees, `list_checklist_items`, and recent `list_task_comments`.
 4. If someone else moved it to `in_progress` recently, or another agent is commenting on it, ask before taking it over.
 5. When nothing fits, `create_task` with `projectId` and `title`, and ask which project if that is unclear. Write the description in Markdown (`descriptionFormat: "markdown"`) covering scope, expected behavior, and how to verify.

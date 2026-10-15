@@ -22,6 +22,8 @@ Tools mostly take opaque internal IDs. People use readable identifiers: tasks an
 
 A bare "Invalid tool arguments." from a tool usually means you passed an identifier where it wanted an internal `id`.
 
+ID parameters are named after their object: `taskId`, `postId`, `docId`, `canvasId`, `commentId`, `roomId`, `threadId`, `projectId`. No tool takes a generic `id` argument. Check `pf-tool schema` or `tools/list` when unsure.
+
 When you report back to a person, name things by title and identifier rather than raw IDs.
 
 ## Rich text

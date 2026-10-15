@@ -40,6 +40,8 @@ When something arrives, read the whole open set, not only the new comments:
 | `suggestion` | Take it if it fits the request. Otherwise reply with why not |
 | `comment`, `approved` | Act only if the text asks for something |
 
+When the user hands you the revised file instead of you making the change, look at it against each annotation before resolving anything. Resolve what it visibly fixes. Where it does not, reply with what you see and leave the annotation open.
+
 Stop and ask the human when feedback is ambiguous, conflicts with other feedback, or goes beyond what they asked for. Reply on the annotation and leave it open.
 
 ## 5. Close the round

@@ -71,7 +71,7 @@ Use this when the user asks you to iterate on a render, image, video, model, or 
 2. Tell the human which post (title and project) and which version is ready, and what kind of feedback you want.
 3. Wait with `wait_for_comments` and `annotated: true`, repeating with the returned `since`.
 4. Read the open set with `list_post_comments` (`status: "open"`, `annotated: true`). For each, read the anchors and call `get_annotation_frame`.
-5. Change the work. Address every `needs_changes`, answer every `question`, and take `suggestion` items that fit.
+5. Change the work. Address every `needs_changes`, answer every `question`, and take `suggestion` items that fit. When the user supplies the revised file, check it against each annotation, and resolve only what it visibly fixes.
 6. Publish the next version with a `changeNote` listing what changed.
 7. For each annotation you addressed, reply with `create_post_comment` (`parentId` set to the annotation) in one plain sentence about the change, then `resolve_post_comment`. Leave questions open after replying.
 8. Go back to step 2.
