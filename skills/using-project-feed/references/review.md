@@ -2,6 +2,8 @@
 
 An annotation is a comment pinned to one file on a post: a point on an image, a time in a video, a frame of a sprite, a page of a PDF, a line range in code, or a camera view of a 3D model. Reviewers leave them in the file viewer. Agents can read, answer, resolve, and create them.
 
+Sections: Review status, Anchors, Read feedback, Wait for feedback, The review loop, Give feedback, Tasks from feedback, Client portals.
+
 ## Review status
 
 Each annotation has a `reviewStatus`:

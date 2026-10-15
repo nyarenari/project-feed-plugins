@@ -2,6 +2,8 @@
 
 ## Connect
 
+Sections: Connect, IDs, Rich text, Search, Pagination, Retries and idempotency, Rate limits, Errors, Waiting for changes, Notifications and webhooks, Safety.
+
 - Hosted MCP server: `https://projectfeed.app/api/mcp`, signed in with OAuth. The agent gets the access of the person who signed in, within the access level they chose.
 - MCP access needs a Pro or Enterprise workspace. Free workspace API keys are read only.
 - A sign-in binds to one workspace on first use. When the person belongs to several workspaces, send `x-project-feed-workspace: <slug>` (or `?workspace=<slug>`) before the first request. To switch later, the person resets the connection under Settings, Tools and tokens, Connected apps.

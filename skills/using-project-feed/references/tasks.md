@@ -2,6 +2,8 @@
 
 A task is an outcome someone needs to track. Discussion stays on the post, comment, or annotation that raised it. The task records who owns the work, where it stands, and how to verify it.
 
+Sections: Fields, IDs, Find before you create, Write a good task, Work a task, Finish a task, Tool notes, Permissions, Time tracking.
+
 ## Fields
 
 | Field | Values |
