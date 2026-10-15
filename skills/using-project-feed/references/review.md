@@ -42,36 +42,38 @@ On 3D models a drawing belongs to the saved camera view and does not wrap the su
 
 ## Read feedback
 
-- `list_post_comments` with `postId`, `annotated: true`, and `status: "open"` returns every open annotation, oldest first. Add `attachmentId` for one file.
+- `list_post_comments` with `postId`, `annotated: true`, and `status: "open"` returns open annotations, oldest first, up to 100 per page. Follow `nextCursor`. Add `attachmentId` for one file.
+- Annotations left on earlier versions stay open until someone resolves them, and their `attachmentId` still points at the older file.
 - `get_post_comment` returns one annotation with its anchors, `reviewStatus`, reply count, and linked task.
-- `get_annotation_frame` with `commentId` returns the picture the reviewer marked plus the anchors. Read it before changing visual work.
+- `get_annotation_frame` with `commentId` returns the picture the reviewer marked, the anchors, and a signed `imageUrl`. It needs both `media:read` and `comments:read`.
   - `source: "snapshot"` is the frame with the marks already drawn (`marksDrawn: true`).
   - `frame`, `video_thumbnail`, and `media` are the unmarked picture. Read it together with `annotation.drawing`.
-  - `source: null` means no picture exists. Work from the anchors and the drawing.
-  - It needs both `media:read` and `comments:read`.
+  - `source: null` means no picture. Either the file has no viewable frame, or the current version dropped the file. For a dropped file, `get_post_version` with the earlier `number` still has its signed `url`.
+
+Read every frame you need before publishing a version that drops the file it belongs to.
 
 ## Wait for feedback
 
 `wait_for_comments` holds the request open until new comments arrive on a post or the timeout passes.
 
 - `postId` (required), optional `attachmentId`, `annotated`, and `timeoutSeconds` (0 to 50, default 25).
-- Pass the returned `since` into the next call unchanged. Without `since`, it waits for comments created after the call starts.
+- It returns `{comments, since}`. Pass `since` into the next call unchanged. Without `since`, it waits only for comments created after the call starts, so anything posted while you were away is missed. Use `list_post_comments` to catch up first.
 - `annotated: true` skips replies. Leave it off when you also need replies to your own answers.
 - When comments arrive, re-read the full open set with `list_post_comments`, not only the new ones.
 
-MCP event subscriptions are off on the hosted server, so `wait_for_comments` is the way to wait. Between rounds, if the human is not reviewing right away, stop and tell them what to review instead of waiting in a loop.
+MCP event subscriptions are off on the hosted server, so `wait_for_comments` is the way to wait. If the human is not reviewing right away, stop and tell them what to review instead of waiting in a loop.
 
 ## The review loop
 
 Use this when the user asks you to iterate on a render, image, video, model, or document until it is approved.
 
-1. **Publish.** New work: `create_post`, upload the files, publish. Existing post: `publish_post_version` with the new files in `uploads`, `mediaIds` for the files to keep, and a `changeNote`.
-2. **Ask.** Tell the human which post (title and project) and which version is ready, and what kind of feedback you want.
-3. **Wait.** `wait_for_comments` with `annotated: true`, repeating with the returned `since`.
-4. **Read.** `list_post_comments` with `status: "open"` and `annotated: true`. For each, read the anchors and call `get_annotation_frame`.
-5. **Change.** Address every `needs_changes`. Answer every `question`. Take `suggestion` items that fit.
-6. **Publish the next version** with a `changeNote` listing what changed.
-7. **Close the round.** For each annotation you addressed, reply with `create_post_comment` (`parentId` set to the annotation) in one plain sentence about the change, then `resolve_post_comment`. Leave questions open after replying.
+1. Publish. New work: `create_post`, upload the files, then publish with `update_post` and `status: "published"`. Existing post: `publish_post_version` with the new files in `uploads`, `mediaIds` for the current files to keep, a `changeNote`, and an `idempotencyKey`.
+2. Tell the human which post (title and project) and which version is ready, and what kind of feedback you want.
+3. Wait with `wait_for_comments` and `annotated: true`, repeating with the returned `since`.
+4. Read the open set with `list_post_comments` (`status: "open"`, `annotated: true`). For each, read the anchors and call `get_annotation_frame`.
+5. Change the work. Address every `needs_changes`, answer every `question`, and take `suggestion` items that fit.
+6. Publish the next version with a `changeNote` listing what changed.
+7. For each annotation you addressed, reply with `create_post_comment` (`parentId` set to the annotation) in one plain sentence about the change, then `resolve_post_comment`. Leave questions open after replying.
 8. Go back to step 2.
 
 Stop when no open `needs_changes` remain, and ask the human to approve. Stop and ask when feedback is ambiguous, conflicts with other feedback, or goes beyond the request. Reply on the annotation and leave it open.
@@ -82,18 +84,19 @@ Never resolve an annotation you did not address. Never delete reviewers' comment
 
 When the user asks you to review someone's media:
 
-- `create_annotation` with `postId`, `attachmentId` (from `get_post` or `list_media`), the anchors, `reviewStatus`, and `content`. Send an `idempotencyKey`.
+- Get the file's `attachmentId` from `list_media` with `postId`. `get_post` does not list files.
+- `create_annotation` with `postId`, `attachmentId`, the anchors, `reviewStatus`, and `content`. `content` can be empty when a drawing says it all. Send an `idempotencyKey`.
 - Pin the exact subject. One issue per annotation.
 - Use `needs_changes` only when a revision is required. Use `question` when you need an answer and `suggestion` for optional ideas.
 - Use a plain post comment for feedback about the whole update.
 - Comments, including annotations, are limited to 20 a minute per person.
 
-`update_post_comment` can change `content`, `reviewStatus`, and the anchors `x`, `y`, `timeMs`, `frame`, `endFrame`, `page`, `camera`, and `drawing`. Only the author can edit content or move anchors. The annotation author, the post author, or an admin can change `reviewStatus` and resolve.
+`update_post_comment` changes `content` and `reviewStatus` at the top level. Moving an annotation goes inside `annotation`: `{annotation: {x, y, timeMs, frame, endFrame, page, camera, drawing}}`. Anchors sent at the top level are rejected, and `endTimeMs` and `lines` cannot be changed after creation. Only the author can edit content or move anchors. The annotation author, the post author, or an admin can change `reviewStatus` and resolve.
 
 ## Tasks from feedback
 
-When an annotation needs an owner or a schedule, `create_task_from_comment` with `commentId` and `title` creates a task in the post's project linked to the post, or links an existing `taskId`. Calling it again returns the same task. Update the task after you verify the fix.
+When an annotation needs an owner or a schedule, `create_task_from_comment` with `commentId` and `title` creates a task in the post's project linked to the post. Pass `taskId` instead to link an existing task. Calling it again returns the same task. Use the returned task's `id` for follow-up writes, and update the task after you verify the fix.
 
 ## Client portals
 
-Guests in a client portal review shared posts too. When the team asks for a decision, the guest sees Approve and Request changes. Guest feedback moves through Requested, Fixing, Sent, and Checked, and the guest confirms with "It's fixed" or "Still not right". Publishing a new workspace version does not update the portal copy. A person shares the new version to the portal.
+Guests in a client portal review shared posts too. When the team asks for a decision, the guest sees Approve and Request changes. Guest feedback moves through Requested, Fixing, Sent, and Checked, and the guest confirms with "It's fixed" or "Still not right". There are no portal tools, so an agent cannot share to a portal or read portal state. Publishing a new workspace version does not update the portal copy. Tell the person to share the new version to the portal.

@@ -25,13 +25,17 @@ Side effects to know before changing status:
 
 ## IDs
 
-A task has three handles: the internal `id`, the `identifier` (`PRO-42`, project prefix plus a number), and the workspace `taskNumber` shown as `#42`. The number in an identifier can differ from `taskNumber`.
+A task has three handles: the internal `id`, the `identifier` (`PRO-42`, the project prefix plus a number), and the `taskNumber` people write as `#42`. Posts in the same project draw from the same identifier sequence, so `PRO-43` may be a post.
 
-Task, comment, checklist, subtask, tag, and time tools expect the internal `id`. The handoff tools also accept `PRO-42` or a task number. When the user gives you an identifier, find the task with `search` or `list_tasks`, read it with `get_task`, and reuse its `id` from then on.
+- `get_task` accepts all three: the `id`, `PRO-42` (any case), or `42`. Pass `42`, not `#42`.
+- Write tools need the internal `id`. `update_task`, `add_checklist_item`, `create_task_comment`, `list_subtasks`, and the tag tools reject identifiers with "Invalid tool arguments."
+- The handoff tools accept identifiers and task numbers.
+
+So when the user names a task, call `get_task` with what they gave you and reuse the returned `id` everywhere after that. If "Invalid tool arguments." comes back from a task tool, you probably passed an identifier.
 
 ## Find before you create
 
-1. `search` for the title or identifier, or `list_tasks` with `projectId` and `status`.
+1. `search` with `types: ["task"]` for the title, or `list_tasks` with `projectId` and `status`.
 2. `list_tasks` returns newest first, excludes subtasks, and can return a short or empty page when rows from hidden projects are filtered out. Keep passing `nextCursor` as `cursor` until `hasMore` is false.
 3. Reuse a clear match. Create a task only when nothing fits, and ask which project to use if that is unclear. Every task needs a project.
 
@@ -46,9 +50,9 @@ Task, comment, checklist, subtask, tag, and time tools expect the internal `id`.
 
 ## Work a task
 
-1. Read it first: `get_task`, `list_checklist_items`, and recent `list_task_comments`.
+1. Read it first: `get_task`, `list_checklist_items`, and `list_task_comments` (newest first).
 2. If another agent or person moved it to `in_progress` recently, ask before taking it over.
-3. Move it to `in_progress` when you start changing things.
+3. Move it to `in_progress` with `update_task` (`taskId` set to the internal `id`, `status: "in_progress"`) when you start changing things.
 4. If the checklist is empty or stale, add one item per real milestone with `add_checklist_item`.
 5. Check items with `update_checklist_item` as each milestone lands, not in a batch at the end.
 6. Comment at checkpoints with `create_task_comment`: what changed, how you verified it, and what is next. Put commit SHAs and pull request URLs in the comment. Agents cannot add commit or PR references directly. Those come from connected integrations.
@@ -67,9 +71,9 @@ Task, comment, checklist, subtask, tag, and time tools expect the internal `id`.
 | Tool | Notes |
 | --- | --- |
 | `create_task` | `title` and `projectId` required. `parentTaskId` creates a subtask with full fields. The parent must be in the same project and cannot be a subtask |
-| `update_task` | Send at least one field. `null` clears a field. `assigneeIds` replaces the whole list. Setting `projectId` moves the task with its subtasks. A subtask cannot move alone. No tag fields, use the tag tools |
+| `update_task` | Send at least one field. `null` clears `assigneeId`, `startDate`, `dueDate`, `estimatePoints`, or `estimateMinutes`. `assigneeIds` replaces the whole list. Setting `projectId` moves the task with its subtasks. A subtask cannot move alone. No tag fields, use the tag tools |
 | `move_task` | Board position. Send at most one of `beforeTaskId`, `afterTaskId`, or `index`. Anchors must be in the destination column |
-| `bulk_update_tasks` | `action` is `status`, `priority`, `assign`, `move_project`, or `delete`, for 1 to 50 `taskIds`. `status` and `assign` are all or nothing. The others report `succeeded` and `failed` per task. Prefer it over many single calls |
+| `bulk_update_tasks` | `action` is `status` (with `status`), `priority` (with `priority`), `assign` (with a single `assigneeId`, or `null` to unassign), `move_project` (with `projectId`), or `delete`, for 1 to 50 `taskIds`. `status` and `assign` are all or nothing. The others report `succeeded` and `failed` per task. Prefer it over many single calls |
 | `delete_task`, `restore_task` | Trash and restore, subtasks included. Tags removed by the delete do not come back. Restore a parent before its subtasks |
 | `create_subtask` | Quick subtask with title, status, priority, and assignees. Use `create_task` with `parentTaskId` for description, dates, tags, or estimates |
 | `update_checklist_item` | Applies `checked` before `text`. Not atomic |
@@ -78,9 +82,9 @@ Task, comment, checklist, subtask, tag, and time tools expect the internal `id`.
 | `delete_task_comments` | Up to 10 per call. Repeat while `hasMore` is true |
 | `create_task_link`, `list_task_links`, `remove_task_link` | Link the task to the post it came from |
 | `list_task_references` | Docs, posts, and tasks that mention this task, plus external commits, pull requests, issues, and files |
-| `add_task_tag`, `set_task_tags`, `remove_task_tag` | Exactly one of `tagId` or `tagName` on add. A project tag only fits tasks in its project. `set_task_tags` replaces the set |
+| `add_task_tag`, `set_task_tags`, `remove_task_tag` | Exactly one of `tagId` or `tagName` on add. `remove_task_tag` takes `tagId` only. A project tag only fits tasks in its project. `set_task_tags` replaces the set |
 | `toggle_task_reaction` | Adds if absent, removes if present. Read before toggling so a retry does not undo it |
-| `create_task_from_comment` | Turns an annotation into a task in the post's project, linked back to the post, or links an existing `taskId`. Annotations only. Calling it again returns the same task |
+| `create_task_from_comment` | With `commentId` and `title`, creates a task in the post's project linked back to the post. With `taskId` instead, links an existing task. Annotations only. Calling it again returns the same task. Use the returned `id`, not the identifier, for follow-up writes |
 
 ## Permissions
 
@@ -88,7 +92,7 @@ Members can change the status and priority of any task they can see. Editing oth
 
 ## Time tracking
 
-Time tools need time tracking enabled in the workspace.
+Time tools need time tracking enabled in the workspace, and their `taskId` must be the internal `id`. An identifier returns "Task not found".
 
 - `create_time_entry`: `taskId` and `durationSeconds` (1 to 86400), optional `occurredOn` and `note`. Log only time that reflects real work. Split anything over 24 hours.
 - `start_timer`, `get_timer`, `stop_timer`: one running timer per person. A second start returns 409, so stop first. `stop_timer` logs the entry. Its `durationSeconds` can only shorten the run. Timers stop on their own at 24 hours.

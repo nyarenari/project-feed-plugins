@@ -13,7 +13,14 @@ Scopes follow `resource:action`, and `write` includes `read`: `projects`, `posts
 
 ## IDs
 
-Tools take opaque internal IDs. People use readable identifiers: `PRO-42` for tasks, `WR-12` for posts, `DOC-12` for docs, and `#42` for workspace task numbers. Resolve an identifier with `search` or the matching list tool, then reuse the internal `id`. Handoff tools accept task identifiers directly.
+Tools mostly take opaque internal IDs. People use readable identifiers: tasks and posts in a project share one sequence (`PRO-41` may be a task and `PRO-42` a post), and people write task numbers as `#42`.
+
+- `get_task` accepts the internal `id`, `PRO-42`, or `42`. Strip the `#`.
+- `get_post` and most write tools accept only the internal `id`.
+- The handoff tools accept task identifiers.
+- Anything else: resolve with `search`, which matches identifiers and titles, then reuse the `id` it returns.
+
+A bare "Invalid tool arguments." from a tool usually means you passed an identifier where it wanted an internal `id`.
 
 When you report back to a person, name things by title and identifier rather than raw IDs.
 
@@ -25,11 +32,11 @@ Post, task, doc, and comment content accept a string or Plate JSON. Set `content
 - `plaintext`: one paragraph per line.
 - `platejs`: an array of Plate blocks such as `{"type": "h2", "children": [{"text": "Review"}]}`.
 
-Reads return Plate JSON plus a plain `contentText`. Limits count visible characters: posts 25,000, post comments and annotations 5,000, task comments 10,000, chat messages 4,000, docs 1 MB.
+Reads return Plate JSON plus a plain `contentText`. Limits count visible characters in UTF-16 units, so an emoji can count as two: posts 25,000, post comments and annotations 5,000, task comments 10,000, doc comments 50,000, new chat discussions 4,000, docs 1 MB. Replies in a chat discussion that mirrors a post, task, or doc thread follow that item's comment limit.
 
 ## Search
 
-`search` with `query` (2 to 200 characters) and optional `types` (`project`, `post`, `task`, `doc`, `canvas`, `discussion`) and `projectId`. Results are ranked, each type contributes at most 25 matches, and only published posts are covered. People, tags, files, and comments are not searched. Use `list_members`, `list_tags`, `list_media`, and the comment list tools.
+`search` with `query` (2 to 200 characters) and optional `types` (`project`, `post`, `task`, `doc`, `canvas`, `discussion`), `projectId`, `limit` (up to 50), and `cursor`. It matches titles, text, and identifiers like `PRO-42`. Results are ranked, each type contributes at most 25 matches, and only published posts are covered. Naming a type the credential cannot read fails. People, tags, files, and comments are not searched. Use `list_members`, `list_tags`, `list_media`, and the comment list tools.
 
 ## Pagination
 
@@ -37,7 +44,8 @@ Lists return `hasMore` and `nextCursor`. Pass `nextCursor` back as `cursor` with
 
 ## Retries and idempotency
 
-- Writes that accept `idempotencyKey` (comments, annotations, post versions, chat) or `requestKey` (handoffs): generate one key per logical write and send the same key on every retry. The same key with a different body is refused with `idempotency_key_reused`.
+- `idempotencyKey` exists on `create_post_comment`, `create_annotation`, `create_task_comment`, `publish_post_version`, `send_chat_message`, and `start_object_discussion`. Handoff requests use `requestKey`. Generate one key per logical write and send the same key on every retry. The same key with a different body is refused with `idempotency_key_reused`.
+- Do not add a key to tools without one, such as `create_post` or `create_task`. Unknown arguments are rejected.
 - Writes without a key: check whether the first attempt landed before retrying.
 - Toggles (reactions) flip state. Read before toggling again.
 - `bulk_update_tasks` changes up to 50 tasks in one call. Prefer it to many single calls.
@@ -46,7 +54,7 @@ Lists return `hasMore` and `nextCursor`. Pass `nextCursor` back as `cursor` with
 
 - About 1,000 requests a minute per credential. Free workspaces get 60 a minute and 1,000 a day.
 - Tighter per-person limits: 10 new posts, 20 comments, and 30 chat messages a minute.
-- `get_limits` shows the remaining budget without spending any. Check it before a batch.
+- `get_limits` returns `rateLimit` and `ownerRateLimit`, each with `limit`, `remaining`, and `reset`. Check it before a batch.
 - After `rate_limit_exceeded`, wait `retryAfterSeconds`. On HTTP 429, wait `Retry-After`. Add jitter and cap attempts.
 
 ## Errors
@@ -56,6 +64,7 @@ Errors carry a `code`. Branch on it:
 | Code | Meaning | Do |
 | --- | --- | --- |
 | `validation_error` | Bad input. Length errors include `field` and the limit | Fix the input. Retrying unchanged will fail again |
+| "Invalid tool arguments." (no code) | Usually an identifier where an internal `id` was needed | Resolve the `id` with `get_task` or `search` |
 | `permission_denied` | Role, ownership, or project access | Tell the person what access is missing |
 | `plan_required` | Needs Pro or Enterprise | Tell the person |
 | `feature_disabled` | Chat, canvases, or time tracking is off for the workspace | Tell the person |
@@ -78,7 +87,7 @@ MCP event subscriptions are off on the hosted server, and list tools have no cha
 
 - `list_notifications`, `get_unread_count`, `mark_notifications_read`, and `update_notification` act on the signed-in person's inbox. Do not mark someone's notifications read unless they asked.
 - `set_project_notification_level` (`default`, `watching`, `muted`) and `set_post_follow_state` adjust what they hear about.
-- `create_webhook` takes a public HTTPS `url` and `events`, and returns its signing secret once. Deliveries are signed with `X-Webhook-Signature` and retried on failure. Deduplicate on `X-Webhook-Id`. `test_webhook` sends a test event.
+- `create_webhook` takes a `name`, a public HTTPS `url`, and `events`, plus optional `projectId` and `enabled`. It returns its signing secret once. Deliveries are signed with `X-Webhook-Signature` and retried on failure. Deduplicate on `X-Webhook-Id`. `test_webhook` sends a test event.
 
 ## Safety
 

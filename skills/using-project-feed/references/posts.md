@@ -13,13 +13,17 @@ A post is a dated update in one project that says what changed and what response
 
 Avoid vague titles, several unrelated updates in one post, a large attachment with no change note or review request, and decisions that live only in comments.
 
+## IDs
+
+Post tools take the internal `id`. `get_post` rejects identifiers like `PRO-43` and post numbers with "Invalid tool arguments." Posts and tasks share one identifier sequence per project, so resolve a name or identifier with `search` (`types: ["post"]`) and use the `id` it returns.
+
 ## Draft first
 
 `create_post` defaults to `status: "draft"`. A draft is visible only to its author: it is not in feeds, search, or file lists, and nobody is notified. Use that.
 
 1. `create_post` with `projectId`, `title` (up to 500 characters), `content`, and `contentFormat: "markdown"`.
 2. Upload files to the post (see [media.md](media.md)).
-3. `get_post` and check the text, attachments, and project.
+3. Check it: `get_post` for the text, project, and status, and `list_media` with `postId` for the attached files. `get_post` does not list files.
 4. `update_post` with `status: "published"`. Followers are notified the first time a post is published.
 5. Tell the user the post title and project. Return `webUrl` if they want a link.
 
@@ -32,7 +36,7 @@ Avoid vague titles, several unrelated updates in one post, a large attachment wi
 | Fix a typo, clarify text, correct the project | `update_post` | Changes the current version in place. No change note, no media changes, no notification |
 | Share revised work for another look | `publish_post_version` | New version number with its own title, content, media, and change note. Moves the post to the top of the feed and notifies followers |
 
-Publish a version for every review round so reviewers can compare it with earlier ones. Earlier versions keep their own media and stay read only. There is no restore. To bring back old content, read it with `get_post_version` and publish it as a new version.
+Publish a version for every review round so reviewers can compare it with earlier ones. Earlier versions keep their own media and stay read only. There is no restore. To bring back old text, read it with `get_post_version` and publish it as a new version. A file dropped from the current version cannot be re-added by ID ("Media not found on this post"). Download it from the signed `url` in `get_post_version` and upload it again.
 
 Only the post author can publish a version. Publishing a version of a draft also publishes the post.
 
@@ -40,13 +44,13 @@ Only the post author can publish a version. Publishing a version of a draft also
 
 - `postId` (required), `title` (up to 200), `content` (omit to keep the current text), `contentFormat`, `changeNote` (up to 500).
 - `mediaIds`: the current media to keep, in order. Omit it to keep all current media. `[]` drops all.
-- `uploads`: up to 10 `{uploadToken, parts}` from `prepare_media_upload`. Do not call `complete_media_upload` for these. The version claims them. If you already completed an upload, that file is on the current version, so list its ID in `mediaIds` instead.
+- `uploads`: up to 10 entries from `prepare_media_upload`. Send `{uploadToken}` for `form` and `tus` transfers, and `{uploadToken, parts}` for `put` and `multipart`. Do not call `complete_media_upload` for these. The version claims them. This needs `media:write`. If you already completed an upload, that file is on the current version, so list its ID in `mediaIds` instead.
 - Kept media plus uploads can total at most 10 files.
 - `idempotencyKey` (up to 100). Reuse it on retry. The same key with a different body is refused with `idempotency_key_reused`.
 
 Write the change note as what changed for the reviewer: "Warmer key light, removed lens flare, fixed the logo kerning."
 
-`list_post_versions` is newest first and its `cursor` is a version number. `get_post_version` takes exactly one of `versionId` or `number`.
+`list_post_versions` is newest first. Page with its `nextCursor`. `get_post_version` takes exactly one of `versionId` or `number`, and returns that version's files with signed URLs.
 
 ## Other post fields
 
@@ -59,7 +63,7 @@ Write the change note as what changed for the reviewer: "Warmer key light, remov
 
 - `create_post_comment`: whole-post feedback or a reply (`parentId`). Up to 5,000 visible characters. Send an `idempotencyKey` (up to 128). Comments are limited to 20 a minute per person.
 - Use `create_annotation` when a spot, time, frame, page, line range, or camera view matters. See [review.md](review.md).
-- `list_post_comments` is oldest first. `replyCount` stops at 20. When `replyCountCapped` is true, read the thread with `parentId`.
+- `list_post_comments` is oldest first, up to 100 per page. Follow `nextCursor`. `replyCount` stops at 20. When `replyCountCapped` is true, read the thread with `parentId`.
 - Only annotations can be resolved. Plain comments cannot.
 - Keep one thread per question. Record the outcome by editing the post or adding a final comment with the decision and the linked task.
 
@@ -70,7 +74,7 @@ Write the change note as what changed for the reviewer: "Warmer key light, remov
 ## Tags
 
 - `list_tags` with `projectId` returns the workspace tags plus that project's tags.
-- `set_post_tags` replaces all tags on a post: `tagIds`, `tagNames`, or both, up to 50. `[]` clears. Only the author or a workspace admin can tag a post.
+- `set_post_tags` replaces all tags on a post: `tagIds`, `tagNames`, or both, up to 50 combined. `[]` clears. Only the author or a workspace admin can tag a post.
 - Tag names are lowercase with hyphens. Reuse an existing tag before creating one with `create_tag`. Tags are categories, not status.
 
 ## Linking to tasks

@@ -2,7 +2,7 @@
 
 Use Project Feed from Cursor, Codex, Claude Code, Gemini CLI, and clients that support the Agent Plugins standard.
 
-The repository packages one hosted MCP connection with shared skills for task execution, project planning, status reports, and backlog triage, plus `using-project-feed`, a full guide to posts, versions, media review, tasks, docs, canvases, chat, and handoffs. Client-specific manifests stay thin so every client receives the same workflows.
+The repository packages one hosted MCP connection with shared skills for task execution, project planning, status reports, backlog triage, and media review rounds, plus `using-project-feed`, a full guide to posts, versions, media review, tasks, docs, canvases, chat, and handoffs. Client-specific manifests stay thin so every client receives the same workflows.
 
 ## Supported clients
 
