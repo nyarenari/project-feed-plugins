@@ -1,32 +1,39 @@
 ---
 name: task-workflow
-description: Work from a Project Feed task and keep its status, checklist, and comments current. Use when a user names a Project Feed task or asks an agent to fix, build, implement, investigate, or pick up tracked work.
+description: Works from a Project Feed task and keeps its status, checklist, and comments current while the agent codes, fixes, or investigates. Use whenever a user names a task (PRO-123, task 42, "the onboarding task"), asks an agent to pick up, fix, build, implement, or investigate tracked work, or wants an agent's progress recorded in Project Feed, even if they never say "task".
 ---
 
 # Task workflow
 
-Use Project Feed as the record of the work while completing the user's request.
+The task is the shared record of the work. People and other agents read it to see who is on what, what is done, and what is left, so keep it true while you work instead of updating it once at the end.
 
 ## Start
 
-1. If the user gave a task identifier, call `get_task` and `list_checklist_items`.
-2. Otherwise, search open work with `list_tasks`. Reuse a clear match. If no task matches, create one when the target project is clear or ask the user which project to use.
-3. Read the task description, project, status, assignee, checklist, and recent comments before changing it.
-4. Move a selected `todo` task to `in_progress` when implementation begins.
-5. Add checklist items for the work that remains if the checklist is empty or stale.
+1. Find the task. If the user named one, call `get_task` with what they gave you. It accepts the internal ID, an identifier like `PRO-123`, or a task number like `42` (pass `42`, not `#42`). Otherwise use `search`, or `list_tasks` with `projectId` and `status`, and reuse a clear match.
+2. Keep the internal `id` from `get_task` and pass it as `taskId` from then on. `update_task`, `add_checklist_item`, `create_task_comment`, `create_subtask`, and the tag tools reject identifiers with "Invalid tool arguments."
+3. Read before changing: description, status, assignees, `list_checklist_items`, and recent `list_task_comments`.
+4. If someone else moved it to `in_progress` recently, or another agent is commenting on it, ask before taking it over.
+5. When nothing fits, `create_task` with `projectId` and `title`, and ask which project if that is unclear. Write the description in Markdown (`descriptionFormat: "markdown"`) covering scope, expected behavior, and how to verify.
+6. Move it to `in_progress` when you start changing things.
+7. If the checklist is empty or stale, add one `add_checklist_item` per real milestone. Write items as outcomes someone can check ("Upload rejects files over 1 GiB"), not activities ("Look at the code").
 
-## Work
+## While working
 
-- Check an item only after that milestone is complete.
-- Leave short comments at meaningful checkpoints. Include the result, verification, and next step.
-- Keep unrelated repository changes out of the task.
-- Ask before changing ownership, priority, dates, or project unless the user requested it.
-- Do not mark a task `done` unless the user explicitly asks.
+- Check an item with `update_checklist_item` and `checked: true` as soon as that milestone is done and verified. A checklist updated only at the end tells nobody anything in the meantime.
+- Comment at checkpoints with `create_task_comment`: what changed, how you verified it, what is next. Include commit SHAs and pull request URLs. Send an `idempotencyKey` and reuse it on a retry so a dropped connection does not post the comment twice.
+- Separable remaining work, such as something with its own owner or schedule, becomes a subtask (`create_task` with `parentTaskId`), not a line buried in a comment.
+- For visual work, attach a screenshot or recording with `prepare_media_upload` and `destination: {type: "task", id}`.
+- Keep unrelated changes out of the task.
+- Ask before changing assignees, priority, dates, or project unless the user asked. Editing the description of a task someone else created can return 403.
 
 ## Finish
 
-1. Confirm the requested work and validation are complete.
-2. Check completed checklist items and keep any real remaining work unchecked.
-3. Add a final comment with what changed and what was verified.
-4. Move the task to `in_review` when the implementation is ready for review.
-5. Leave it `in_progress` if work remains.
+| Situation | Status |
+| --- | --- |
+| Planned work is done and verified, and every finished item is checked | `in_review` |
+| Work remains, or you are stopping partway | Stay `in_progress`, with the remaining items unchecked |
+| The user explicitly says it is done | `done` |
+
+Leave a final comment with what changed and what you verified before moving to `in_review`.
+
+Never set `done` on your own. A person decides when work is accepted, and `done` also completes the task's open subtasks and cancels its unfinished handoffs.
