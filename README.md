@@ -91,6 +91,8 @@ The client manifests are:
 - `gemini-extension.json`
 - `plugin.json` for the Agent Plugins standard
 
+Claude auto-loads `.mcp.json`. Codex uses `.codex-mcp.json` through its manifest. Keep the client formats separate.
+
 See [Publishing](docs/PUBLISHING.md) for the separate marketplace release steps.
 
 ## Permissions and data

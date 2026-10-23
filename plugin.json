@@ -1,11 +1,11 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "project-feed",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Plan work, manage tasks, and share project progress with Project Feed.",
   "author": {
-    "name": "Project Feed",
-    "email": "support@projectfeed.app"
+    "name": "Nyarenari",
+    "email": "tezenari@nyarenari.com"
   },
   "homepage": "https://projectfeed.app",
   "repository": "https://github.com/nyarenari/project-feed-plugins",

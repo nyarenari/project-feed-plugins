@@ -1,10 +1,10 @@
 {
   "name": "project-feed",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Plan work, manage tasks, and share project progress from Codex and ChatGPT.",
   "author": {
-    "name": "Project Feed",
-    "email": "support@projectfeed.app",
+    "name": "Nyarenari",
+    "email": "tezenari@nyarenari.com",
     "url": "https://projectfeed.app"
   },
   "homepage": "https://projectfeed.app",
@@ -18,12 +18,12 @@
     "mcp"
   ],
   "skills": "./skills/",
-  "mcpServers": "./.mcp.json",
+  "mcpServers": "./.codex-mcp.json",
   "interface": {
     "displayName": "Project Feed",
     "shortDescription": "Plan projects and keep work current",
     "longDescription": "Use Project Feed to plan projects, manage tasks, prepare status reports, and triage work from Codex and ChatGPT.",
-    "developerName": "Project Feed",
+    "developerName": "Nyarenari",
     "category": "Productivity",
     "capabilities": [
       "Read",

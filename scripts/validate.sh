@@ -108,12 +108,12 @@ if (cursorMcp.mcpServers?.["Project Feed"]?.type !== "streamable-http") {
   errors.push("Agent Plugins MCP transport is not streamable HTTP");
 }
 
-const claudeMcp = await readJson(".claude-mcp.json");
+const claudeMcp = await readJson(".mcp.json");
 if (claudeMcp.mcpServers?.["Project Feed"]?.type !== "http") {
   errors.push("Claude MCP transport is not HTTP");
 }
 
-const codexMcp = await readJson(".mcp.json");
+const codexMcp = await readJson(".codex-mcp.json");
 
 const credentialFields = /"(headers|bearer_token_env_var|userConfig|variables|settings)"/;
 for (const [label, value] of Object.entries({
