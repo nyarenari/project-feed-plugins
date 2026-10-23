@@ -1,10 +1,10 @@
 {
   "name": "project-feed",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Plan work, manage tasks, and share project progress from Claude Code.",
   "author": {
-    "name": "Project Feed",
-    "email": "support@projectfeed.app",
+    "name": "Nyarenari",
+    "email": "tezenari@nyarenari.com",
     "url": "https://projectfeed.app"
   },
   "homepage": "https://projectfeed.app",
@@ -18,5 +18,11 @@
     "mcp"
   ],
   "skills": "./skills/",
-  "mcpServers": "./.claude-mcp.json"
+  "mcpServers": "./.mcp.json",
+  "displayName": "Project Feed",
+  "icon": "./assets/logo.svg",
+  "documentationUrl": "https://projectfeed.app/docs/agents/mcp",
+  "supportUrl": "https://projectfeed.app/contact",
+  "privacyPolicyUrl": "https://projectfeed.app/privacy",
+  "termsOfServiceUrl": "https://projectfeed.app/terms"
 }

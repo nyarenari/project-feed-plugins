@@ -1,11 +1,11 @@
 {
   "name": "project-feed",
   "displayName": "Project Feed",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Plan work, manage tasks, and share project progress from Cursor.",
   "author": {
-    "name": "Project Feed",
-    "email": "support@projectfeed.app"
+    "name": "Nyarenari",
+    "email": "tezenari@nyarenari.com"
   },
   "homepage": "https://projectfeed.app",
   "repository": "https://github.com/nyarenari/project-feed-plugins",
