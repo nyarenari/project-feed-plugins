@@ -105,6 +105,6 @@ See the [Project Feed MCP documentation](https://projectfeed.app/docs/agents/mcp
 
 ## Support
 
-Open an issue in this repository for packaging or workflow problems. Contact `support@projectfeed.app` for account, workspace, or hosted MCP problems.
+Open an issue in this repository for packaging or workflow problems. Contact `support@nyarenari.com` for account, workspace, or hosted MCP problems.
 
 Security reports should go to `security@projectfeed.app`. Do not include credentials or private workspace data in a public issue.
