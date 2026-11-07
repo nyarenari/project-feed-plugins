@@ -1,6 +1,6 @@
 # Project Feed plugins
 
-Use Project Feed from Cursor, Codex, Claude Code, Gemini CLI, and clients that support the Agent Plugins standard.
+Use Project Feed from Cursor, Codex, Claude Code, Gemini CLI, Hermes Agent, and clients that support the Agent Plugins standard.
 
 The repository packages one hosted MCP connection with shared skills for task execution, project planning, status reports, and backlog triage. Client-specific manifests stay thin so every client receives the same workflows.
 
@@ -12,6 +12,7 @@ The repository packages one hosted MCP connection with shared skills for task ex
 | Codex and ChatGPT | Codex Plugin | `./scripts/install-local.sh codex` |
 | Claude Code | Claude Code Plugin | `./scripts/install-local.sh claude` |
 | Gemini CLI | Gemini CLI Extension | `./scripts/install-local.sh gemini` |
+| Hermes Agent | Agent Plugin | `hermes plugins install nyarenari/project-feed-plugins` |
 | Agent Plugins clients | Agent Plugin | Install this repository with the client's plugin command |
 
 ## Configure access
@@ -66,6 +67,29 @@ gemini extensions install https://github.com/nyarenari/project-feed-plugins.git
 
 Start Gemini CLI and run `/mcp auth project-feed` to sign in.
 
+### Hermes Agent
+
+Install the package and enable it:
+
+```bash
+hermes plugins install nyarenari/project-feed-plugins
+hermes plugins enable project-feed
+```
+
+Hermes signs in to remote MCP servers only when the server entry asks for OAuth, so add this to `~/.hermes/config.yaml`:
+
+```yaml
+mcp_servers:
+  Project Feed:
+    url: https://projectfeed.app/api/mcp
+    auth: oauth
+    trust: untrusted
+```
+
+Run `hermes mcp login "Project Feed"`, or start Hermes and approve the sign-in in your browser. `trust: untrusted` makes Hermes ask before tools that change data. Read-only tools run without a prompt.
+
+If you belong to more than one workspace, use `https://projectfeed.app/api/mcp/w/<workspace-slug>` as the URL.
+
 ## Try it
 
 - "Pick up PRO-123 and keep the task current while you work."
@@ -97,7 +121,7 @@ See [Publishing](docs/PUBLISHING.md) for the separate marketplace release steps.
 
 ## Permissions and data
 
-The plugins send Project Feed tool requests to `https://projectfeed.app/api/mcp`. Project Feed applies the permissions of the account that signed in. The packages do not include analytics, background hooks, or local executables.
+The plugins send Project Feed tool requests to `https://projectfeed.app/api/mcp`. Project Feed applies the permissions of the account that signed in. The packages do not include analytics, background hooks, or local executables. Hermes keeps its Project Feed token under `~/.hermes/mcp-tokens/`.
 
 Disconnect the client in Project Feed if a device or client account is no longer trusted.
 

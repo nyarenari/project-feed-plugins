@@ -20,6 +20,14 @@ The repository can be installed directly as a Claude Code marketplace. An organi
 
 Add the `gemini-cli-extension` topic to the public GitHub repository. Gemini CLI discovers gallery entries from public tagged repositories with `gemini-extension.json` at the repository root.
 
+## Hermes Agent
+
+The Hermes plugin catalog lists `plugin-catalog/project-feed.yaml` in `NousResearch/hermes-agent`, pinned to a full commit SHA. Run `hermes plugins validate . --install-deps` at the commit you pin. Each release needs a new catalog PR that bumps `sha` and `version`, and a maintainer reviews the commit range before it reaches Hermes users.
+
+## skills.sh
+
+skills.sh lists this repository's skills from `npx skills add nyarenari/project-feed-plugins` install telemetry. There is nothing to submit.
+
 ## Release checklist
 
 1. Run `./scripts/validate.sh`.
