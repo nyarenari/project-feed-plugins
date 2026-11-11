@@ -8,17 +8,25 @@ Submit `https://github.com/nyarenari/project-feed-plugins` through the Cursor Ma
 
 ## Codex and ChatGPT
 
-The repository marketplace supports local and team installation. A public listing in the shared ChatGPT and Codex Plugins Directory also requires registering the hosted MCP connection in ChatGPT developer mode, adding its `plugin_asdk_app...` mapping to `.app.json`, and submitting the plugin through the OpenAI Platform review flow.
+The repository marketplace supports local and team installation. For the shared ChatGPT and Codex Plugins Directory, prepare a separate public ZIP with listing metadata, review cases, and a working demo recording URL. Provide the dedicated review account only through the portal's secure reviewer-access fields.
 
-Do not add a placeholder connector identifier. Register the production Project Feed MCP server before creating `.app.json`.
+Upload the completed ZIP through the OpenAI Platform plugin dashboard, connect the hosted MCP server with OAuth, and complete the saved-version tests, scans, and publisher requirements. Keep private `.app.json` bindings out of the public upload. Submission for review and publication after approval are separate steps.
 
 ## Claude Code
 
-The repository can be installed directly as a Claude Code marketplace. Submit the plugin through the Claude plugin form when it is ready for the official marketplace.
+The repository can be installed directly as a Claude Code marketplace. An organization owner submits its GitHub source through the [Claude directory portal](https://claude.ai/directory/manage). Submit the hosted MCP connector and plugin bundle separately. Run `claude plugin validate --strict --profile directory .` before submitting the bundle.
 
 ## Gemini CLI
 
 Add the `gemini-cli-extension` topic to the public GitHub repository. Gemini CLI discovers gallery entries from public tagged repositories with `gemini-extension.json` at the repository root.
+
+## Hermes Agent
+
+The Hermes plugin catalog lists `plugin-catalog/project-feed.yaml` in `NousResearch/hermes-agent`, pinned to a full commit SHA. Run `hermes plugins validate . --install-deps` at the commit you pin. Each release needs a new catalog PR that bumps `sha` and `version`, and a maintainer reviews the commit range before it reaches Hermes users.
+
+## skills.sh
+
+skills.sh lists this repository's skills from `npx skills add nyarenari/project-feed-plugins` install telemetry. There is nothing to submit.
 
 ## Release checklist
 

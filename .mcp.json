@@ -1,5 +1,8 @@
 {
-  "Project Feed": {
-    "url": "https://projectfeed.app/api/mcp"
+  "mcpServers": {
+    "Project Feed": {
+      "type": "http",
+      "url": "https://projectfeed.app/api/mcp"
+    }
   }
 }
